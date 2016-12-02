@@ -1,4 +1,4 @@
-/*Win scene, Loose scene, save score*/
+/*save score*/
 
 //cGame.cpp =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -108,7 +108,7 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	//Load game sounds
 	soundList = { "theme", "click" , "shot", "explosion", "Motivation"}; //Array of sound names
 	soundTypes = { MUSIC, SFX, SFX, SFX, SFX}; //Sound types
-	soundsToUse = { "Audio/Theme/15684__marec__neutron.wav", "Audio/SFX/ClickOn.wav", "Audio/SFX/42994__noisecollector__blasters.wav", "Audio/SFX/270314__thenetherchickens__eeehhh.wav", "Audio/SFX/259681__xtrgamr__die.wav" }; //Sound file locations
+	soundsToUse = { "Audio/Theme/15684__marec__neutron.wav", "Audio/SFX/343015__zenithinfinitivestudios__ui-button1.wav", "Audio/SFX/42994__noisecollector__blasters.wav", "Audio/SFX/270314__thenetherchickens__eeehhh.wav", "Audio/SFX/259681__xtrgamr__die.wav" }; //Sound file locations
 	for (int sounds = 0; sounds < soundList.size(); sounds++) //Integar sounds is equal to 0, sounds is less than the sound list size, add 1 to sounds
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]); //Adds the sound to use
@@ -216,14 +216,15 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		//Renders the Backgrounds
 		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
 		//Renders the texts
-		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Temporary texture set to score text
-		pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
+		theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
+		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
+		pos = { 400, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of score text
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders score text
 		tempTextTexture = theTextureManager->getTexture("ThanksTxt"); //Temporary texture set to thanks text
-		pos = { 300, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+		pos = { 400, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
 		tempTextTexture = theTextureManager->getTexture("SeeYouTxt"); //Temporary texture set to seeyou text
-		pos = { 300, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+		pos = { 400, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
 		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
 		//Renders the Buttons
 		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 }); //Menu button position
@@ -237,41 +238,43 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 			//Renders the Backgrounds
 			spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
 			//Renders the texts
-			tempTextTexture = theTextureManager->getTexture("TitleTxt"); //Temporary texture set to title text
-			pos = { 10, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+			theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
+			tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
+			pos = { 400, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of score text
+			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders score text
+			tempTextTexture = theTextureManager->getTexture("LostTxt"); //Temporary texture set to thanks text
+			pos = { 400, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
-			tempTextTexture = theTextureManager->getTexture("TitleTxt"); //Temporary texture set to won text
-			pos = { 300, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
-			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
-			tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Temporary texture set to score text
-			pos = { 300, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+			tempTextTexture = theTextureManager->getTexture("SeeYouTxt"); //Temporary texture set to seeyou text
+			pos = { 400, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
 			tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
 			//Renders the Buttons
-			theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 }); //Button position
+			theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 }); //Menu button position
 			theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale()); //Renders menu button
-			theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 575 }); //Button position
-			theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale()); //Renders quit button
+			theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 575 }); //Exit Button position
+			theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale()); //Renders exit button
 		}
 	break;	
 	case WON: //Win Scene
 	{
-		//Renders the background
-		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale());
-		//Texts render is main menu screen
-		tempTextTexture = theTextureManager->getTexture("TitleTxt"); //Temperory txture set to Title text
-		pos = { 350, 10, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Positon of the text
-		scale = { 1, 1 }; //Scale of the text
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text with the scale and position
-		tempTextTexture = theTextureManager->getTexture("TitleTxt"); //Temporary texture set to Contorls text
-		pos = { 250, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of the texure
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the texture with scale and position
-		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Temporary texture set to Contorls text
-		pos = { 250, 150, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of the texure
-		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale);
+		//Renders the Backgrounds
+		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
+		//Renders the texts
+		theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
+		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
+		pos = { 400, 100, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of score text
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders score text
+		tempTextTexture = theTextureManager->getTexture("WONTxt"); //Temporary texture set to thanks text
+		pos = { 400, 200, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
+		tempTextTexture = theTextureManager->getTexture("ThanksTxt"); //Temporary texture set to seeyou text
+		pos = { 400, 300, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of text
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders the text
 		//Renders the Buttons
-		theButtonMgr->getBtn("play_btn")->render(theRenderer, &theButtonMgr->getBtn("play_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("play_btn")->getSpritePos(), theButtonMgr->getBtn("play_btn")->getSpriteScale()); //Renders the play button
-		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 350, 375 }); //Position of the exit button
-		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale()); //Renders the exit button
+		theButtonMgr->getBtn("menu_btn")->setSpritePos({ 500, 500 }); //Menu button position
+		theButtonMgr->getBtn("menu_btn")->render(theRenderer, &theButtonMgr->getBtn("menu_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("menu_btn")->getSpritePos(), theButtonMgr->getBtn("menu_btn")->getSpriteScale()); //Renders menu button
+		theButtonMgr->getBtn("exit_btn")->setSpritePos({ 500, 575 }); //Exit Button position
+		theButtonMgr->getBtn("exit_btn")->render(theRenderer, &theButtonMgr->getBtn("exit_btn")->getSpriteDimensions(), &theButtonMgr->getBtn("exit_btn")->getSpritePos(), theButtonMgr->getBtn("exit_btn")->getSpriteScale()); //Renders exit button
 	}
 	break;
 	case QUIT: //Quit Scene
@@ -310,6 +313,19 @@ void cGame::update(double deltaTime)
 	break;
 	case PLAYING: //Playing scene
 	{
+		if (score == 400) //If players score is equal to 400
+		{
+			cout << "Trying to get to won pls" << endl;
+			theGameState = WON;
+		}
+		for (int alyBob = 0; alyBob < 1; alyBob++/*int alyBob = 0; alyBob < theAliens.size; alyBob++*/) // Change the 35 to number of desired aliens
+		{
+			if (theAliens[alyBob]->getSpritePos().y >= 500)
+			{
+				cout << "Trying to get to loss pls" << endl;
+				theGameState = LOST;
+			}
+		}
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, END, theAreaClicked); //Clicking exit button changes the game to state to quit
 		theGameState = theButtonMgr->getBtn("load_btn")->update(theGameState, LOADMAP, theAreaClicked); //Clicking the load button will change the game state to load
 		if (fileAvailable && theGameState == LOADMAP) //If the file is avaiable and the game state is in load
@@ -406,30 +422,18 @@ void cGame::update(double deltaTime)
 	//Player loosing or winning the game
 	case LOST:
 	{
-		theAliens.clear();
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
 	}
 	break;
 	case WON:
 	{
-		theAliens.clear();
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
 	}
 	break;
 	default:
 		break;
-	}
-	if (score == 400) //If players score is equal to 400
-	{
-		cout << "Trying to get to won pls" << endl;
-		theGameState = WON;
-	}
-	if (theAlien.getSpritePos().y == 300)
-	{
-		cout << "Trying to get to loss pls" << endl;
-		theGameState = LOST;
 	}
 }
 
@@ -452,6 +456,7 @@ bool cGame::getInput(bool theLoop)
 			{
 			case SDL_BUTTON_LEFT: //Mouse button left click
 			{
+				theSoundMgr->getSnd("click")->play(0);
 				theAreaClicked = { event.motion.x, event.motion.y }; //The area clicked, coordinates of clicks
 			}
 			break;
@@ -468,6 +473,7 @@ bool cGame::getInput(bool theLoop)
 			{
 				if (theGameState == PLAYING) //If gamestate is in Playing
 				{
+					theSoundMgr->getSnd("click")->play(0);
 					theAreaClicked = { event.motion.x, event.motion.y }; //The area clicked, cooridantes of click
 				}
 			}

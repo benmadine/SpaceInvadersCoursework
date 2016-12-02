@@ -38,10 +38,6 @@ void cAliens::update(double deltaTime)
 			this->setAlienVelocity({ +100, 0 }); //Sets the alien velocity to + 1, moves right
 			this->setSpriteTranslation({ 100, 0 }); //Set the alien velocity to -1, moves the alien left
 		}
-	if (currentSpritePos.y == 600)
-	{
-		cout << "Im at 600 do we beat him now?";
-	}
 }
 
 //The alien velocity 
