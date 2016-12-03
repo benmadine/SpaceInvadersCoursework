@@ -13,6 +13,7 @@ static cButtonMgr* theButtonMgr = cButtonMgr::getInstance();
 int score = 0; //Integar varaible score = 0
 string strScore; //String variable strScore
 
+
 //Constructor
 cGame::cGame()
 {
@@ -31,6 +32,7 @@ cGame* cGame::getInstance()
 
 void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 {
+	bool easterEgg = false; //Sets the easter egg value to true
 	//Backgorund dimesnions(width and height) and sets it to black
 	SDL_GetRendererOutputSize(theRenderer, &renderWidth, &renderHeight);
 	this->m_lastTime = high_resolution_clock::now();
@@ -58,21 +60,14 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	//Arry of textures
 	theTextureManager->setRenderer(theRenderer); //Texture Manager
-	textureName = { "alien", "ship", "bullet", "background" }; //Array of texture names
-	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg" }; //Texture file locations
+	textureName = { "alien", "ship", "bullet", "background", "EasterEggBullet", "EasterEggShip", "EasterEggAlien" }; //Array of texture names
+	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg", "Images\\mountainJew.png", "Images\\easterEggShip.png", "Images\\easterEggAlien.png" }; //Texture file locations
 
 	//Stores the textures in the array
 	for (int tCount = 0; tCount < textureName.size(); tCount++) //For integar tcount equals 0, tcount is less than the texture size, add 1 to tcount
 	{
-		theTextureManager->addTexture(textureName[tCount], texturesToUse[tCount]); // Adds the texture to use
+		theTextureManager->addTexture(textureName[tCount], texturesToUse[tCount]); // Assigns textures
 	}
-
-	//Watch this part
-	tempTextTexture = theTextureManager->getTexture("alien"); //Makes the temporary texture equal to the aliens texutre
-	//This line here is messed up
-	aRect = { 0, 0, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Gets the texture
-	aColour = { 228, 213, 238, 255 }; //Texutre colour
-	//Unwatch this part
 
 	// Store the Buttons
 	btnNameList = { "exit_btn", "instructions_btn", "load_btn", "menu_btn", "play_btn", "save_btn", "settings_btn" }; //Array of button name list
@@ -505,6 +500,12 @@ bool cGame::getInput(bool theLoop)
 			{
 				theSoundMgr->getSnd("Motivation")->play(0);
 				cout << "You discovered the easter egg of motivation woooo";
+			}
+			break;
+			case SDLK_i:
+			{
+				bool easterEgg = true;
+				cout << "You have activated the easter egg";
 			}
 			break;
 			case SDLK_LEFT: //Left arrow key
