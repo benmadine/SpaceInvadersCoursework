@@ -1,4 +1,4 @@
-/*save score*/
+/*save score, replay*/
 
 //cGame.cpp =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
@@ -12,7 +12,7 @@ static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 static cButtonMgr* theButtonMgr = cButtonMgr::getInstance();
 int score = 0; //Integar varaible score = 0
 string strScore; //String variable strScore
-
+bool endGame = false;
 
 //Constructor
 cGame::cGame()
@@ -60,8 +60,8 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 
 	//Arry of textures
 	theTextureManager->setRenderer(theRenderer); //Texture Manager
-	textureName = { "alien", "ship", "bullet", "background", "EasterEggBullet", "EasterEggShip", "EasterEggAlien" }; //Array of texture names
-	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg", "Images\\mountainJew.png", "Images\\easterEggShip.png", "Images\\easterEggAlien.png" }; //Texture file locations
+	textureName = { "alien", "ship", "bullet", "background"}; //Array of texture names
+	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg"}; //Texture file locations
 
 	//Stores the textures in the array
 	for (int tCount = 0; tCount < textureName.size(); tCount++) //For integar tcount equals 0, tcount is less than the texture size, add 1 to tcount
@@ -312,6 +312,7 @@ void cGame::update(double deltaTime)
 		{
 			cout << "Trying to get to won pls" << endl;
 			theGameState = WON;
+			endGame = true;
 		}
 		for (int alyBob = 0; alyBob < 1; alyBob++/*int alyBob = 0; alyBob < theAliens.size; alyBob++*/) // Change the 35 to number of desired aliens
 		{
@@ -319,6 +320,7 @@ void cGame::update(double deltaTime)
 			{
 				cout << "Trying to get to loss pls" << endl;
 				theGameState = LOST;
+				endGame = true;
 			}
 		}
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, END, theAreaClicked); //Clicking exit button changes the game to state to quit
@@ -402,12 +404,19 @@ void cGame::update(double deltaTime)
 			}
 		}
 		theShip.update(deltaTime); //Update the Rockets position
+		if (endGame == true)
+		{
+			theAliens.clear();
+			theBullets.clear();
+			theAlien.setSpritePos({ 500, 700 });
+		}
 	}
 	break;
 	case END: //End scene
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
+		endGame = false;
 	}
 	break;
 	case QUIT:
@@ -419,12 +428,14 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
+		endGame = false;
 	}
 	break;
 	case WON:
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
+		endGame = false;
 	}
 	break;
 	default:
