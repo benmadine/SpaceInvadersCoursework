@@ -12,7 +12,7 @@ static cSoundMgr* theSoundMgr = cSoundMgr::getInstance();
 static cButtonMgr* theButtonMgr = cButtonMgr::getInstance();
 int score = 0; //Integar varaible score = 0
 string strScore; //String variable strScore
-bool endGame = false;
+bool endGame = false; //Boolean for the end game is set to false
 
 //Constructor
 cGame::cGame()
@@ -46,22 +46,11 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	
 	// Set filename
 	theFile.setFileName("Data/usermap.dat"); //Filename
-	// Check file is available
-	if (!theFile.openFile(ios::in)) //open file for input output
-	{
-		cout << "Could not open specified file '" << theFile.getFileName() << "'. Error " << SDL_GetError() << endl; //Displays error message
-		fileAvailable = false; //Sets boolean fileAvailable to false
-	}
-	else //Else
-	{
-		cout << "File '" << theFile.getFileName() << "' opened for input!" << endl; //Displays message that file has been found
-		fileAvailable = true; //Sets boolean fileAvailable to true
-	}
 
 	//Arry of textures
 	theTextureManager->setRenderer(theRenderer); //Texture Manager
-	textureName = { "alien", "ship", "bullet", "background"}; //Array of texture names
-	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg"}; //Texture file locations
+	textureName = { "alien", "ship", "bullet", "background" , "backgroundLoose", "backgroundGame", "backgroundWon"}; //Array of texture names
+	texturesToUse = { "Images\\Alien.png", "Images\\SpaceInvader.png", "Images\\Bullet.png", "Images\\Background.jpg", "Images\\BackgroundGameover.png", "Images\\Maingamebackground.png", "Images\\Wonbackground.png" }; //Texture file locations
 
 	//Stores the textures in the array
 	for (int tCount = 0; tCount < textureName.size(); tCount++) //For integar tcount equals 0, tcount is less than the texture size, add 1 to tcount
@@ -93,29 +82,44 @@ void cGame::initialise(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		theFontMgr->addFont(fontList[fonts], fontsToUse[fonts], 48); //Adds the font
 	}
-	gameTextNames = { "TitleTxt", "CreateTxt", "ThanksTxt", "SeeYouTxt", "ScoreTxt", "ContorlsTxt", "WONTxt", "ContorlsTxt2", "LostTxt"}; //The name of texts in the game
-	gameTextList = { "Space Invaders", "Survive the Aliens", "Thanks for playing!", "Game Over!", "Score: ", "Use the arrow keys to move", "YOU WON!!", "and the space bar to shoot", "You lost:((((("}; //The messages in the text
+	gameTextNames = { "TitleTxt", "CreateTxt", "ThanksTxt", "SeeYouTxt", "ScoreTxt", "ContorlsTxt", "WONTxt", "ContorlsTxt2", "LostTxt" , "LoadedScore"}; //The name of texts in the game
+	gameTextList = { "Space Invaders", "Survive the Aliens", "Thanks for playing!", "Game Over!", "Score: ", "Use the arrow keys to move", "YOU WON!!", "and the space bar to shoot", "You lost:(((((" , "Your old score was: "}; //The messages in the text
 	for (int text = 0; text < gameTextNames.size(); text++) //For, integar text = 0, text is less than text name size, add 1 to text
 	{
 		theTextureManager->addTexture(gameTextNames[text], theFontMgr->getFont("digital")->createTextTexture(theRenderer, gameTextList[text], SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Adds the font type digital and have a solid clear background to it
 	}
 
 	//Load game sounds
-	soundList = { "theme", "click" , "shot", "explosion", "Motivation"}; //Array of sound names
-	soundTypes = { MUSIC, SFX, SFX, SFX, SFX}; //Sound types
-	soundsToUse = { "Audio/Theme/15684__marec__neutron.wav", "Audio/SFX/343015__zenithinfinitivestudios__ui-button1.wav", "Audio/SFX/42994__noisecollector__blasters.wav", "Audio/SFX/270314__thenetherchickens__eeehhh.wav", "Audio/SFX/259681__xtrgamr__die.wav" }; //Sound file locations
+	soundList = { "theme", "click" , "shot", "explosion", "Motivation", "sadMusic"}; //Array of sound names
+	soundTypes = { MUSIC, SFX, SFX, SFX, SFX, MUSIC}; //Sound types
+	soundsToUse = { "Audio/Theme/15684__marec__neutron.wav", "Audio/SFX/343015__zenithinfinitivestudios__ui-button1.wav", "Audio/SFX/42994__noisecollector__blasters.wav", "Audio/SFX/270314__thenetherchickens__eeehhh.wav", "Audio/SFX/259681__xtrgamr__die.wav", "Audio/Theme/sadmusic.wav"}; //Sound file locations
 	for (int sounds = 0; sounds < soundList.size(); sounds++) //Integar sounds is equal to 0, sounds is less than the sound list size, add 1 to sounds
 	{
 		theSoundMgr->add(soundList[sounds], soundsToUse[sounds], soundTypes[sounds]); //Adds the sound to use
 	}
+		theSoundMgr->getSnd("theme")->play(-1); //Makes the theme play out through the whole game
 
-	theSoundMgr->getSnd("theme")->play(-1); //Makes the theme play out through the whole game
-
+	//Menu Background
 	//Sets the background position, gets image and dimensions
 	spriteBackground.setSpritePos({ 0, 0 }); //Background position
 	spriteBackground.setTexture(theTextureManager->getTexture("background")); //Gets texure for the background
 	spriteBackground.setSpriteDimensions(theTextureManager->getTexture("background")->getTWidth(), theTextureManager->getTexture("background")->getTHeight()); //Width and height of the background
 
+	//Main Background
+	spriteBackgroundGame.setSpritePos({ 0, 0 }); //Background position
+	spriteBackgroundGame.setTexture(theTextureManager->getTexture("backgroundGame")); //Gets texure for the background
+	spriteBackgroundGame.setSpriteDimensions(theTextureManager->getTexture("backgroundGame")->getTWidth(), theTextureManager->getTexture("background")->getTHeight()); //Width and height of the background
+	
+	//Win Background
+	spriteBackgroundWon.setSpritePos({ 0, 0 }); //Background position
+	spriteBackgroundWon.setTexture(theTextureManager->getTexture("backgroundWon")); //Gets texure for the background
+	spriteBackgroundWon.setSpriteDimensions(theTextureManager->getTexture("backgroundWon")->getTWidth(), theTextureManager->getTexture("background")->getTHeight()); //Width and height of the background
+
+	//Loose Background
+	spriteBackgroundLoose.setSpritePos({ 0, 0 }); //Background position
+	spriteBackgroundLoose.setTexture(theTextureManager->getTexture("backgroundLoose")); //Gets texure for the background
+	spriteBackgroundLoose.setSpriteDimensions(theTextureManager->getTexture("backgroundLoose")->getTWidth(), theTextureManager->getTexture("background")->getTHeight()); //Width and height of the background
+	
 	//Sets the SpaceShip position, gets imahe and dimensions
 	theShip.setSpritePos({ 500, 700 }); //Ship position
 	theShip.setTexture(theTextureManager->getTexture("ship")); //Gets the ship texture
@@ -177,7 +181,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	case PLAYING: //Play Scene
 	{
 		//Renders the Background
-		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders background
+		spriteBackgroundGame.render(theRenderer, NULL, NULL, spriteBackgroundGame.getSpriteScale()); //Renders background
 		//Score Text	
 		theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
 		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
@@ -210,6 +214,14 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	{
 		//Renders the Backgrounds
 		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
+		//Renders the old score
+		//string prevScore
+		//LoadedScore
+		//prevScore = "LoadedScore";
+		theTextureManager->addTexture("LoadedScore", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
+		tempTextTexture = theTextureManager->getTexture("LoadedScore"); //Sets temporary texture to score text
+		pos = { 400, 400, tempTextTexture->getTextureRect().w, tempTextTexture->getTextureRect().h }; //Position of score text
+		tempTextTexture->renderTexture(theRenderer, tempTextTexture->getTexture(), &tempTextTexture->getTextureRect(), &pos, scale); //Renders score text
 		//Renders the texts
 		theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
 		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
@@ -231,7 +243,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 		case LOST:
 		{
 			//Renders the Backgrounds
-			spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
+			spriteBackgroundLoose.render(theRenderer, NULL, NULL, spriteBackgroundLoose.getSpriteScale()); //Renders the background
 			//Renders the texts
 			theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
 			tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
@@ -253,7 +265,7 @@ void cGame::render(SDL_Window* theSDLWND, SDL_Renderer* theRenderer)
 	case WON: //Win Scene
 	{
 		//Renders the Backgrounds
-		spriteBackground.render(theRenderer, NULL, NULL, spriteBackground.getSpriteScale()); //Renders the background
+		spriteBackgroundWon.render(theRenderer, NULL, NULL, spriteBackgroundWon.getSpriteScale()); //Renders the background
 		//Renders the texts
 		theTextureManager->addTexture("ScoreTxt", theFontMgr->getFont("digital")->createTextTexture(theRenderer, strScore.c_str(), SOLID, { 228, 213, 238, 255 }, { 0, 0, 0, 0 })); //Renders score text with the font type and solid background
 		tempTextTexture = theTextureManager->getTexture("ScoreTxt"); //Sets temporary texture to score text
@@ -297,6 +309,22 @@ void cGame::update()
 
 void cGame::update(double deltaTime)
 {
+	if (theGameState == PLAYING) //If the game state is equal to playing
+	{
+		if (theButtonMgr->getBtn("exit_btn")->getClicked()) //If button is clicked
+		{
+			endGame = true; //Reset the end game
+			theButtonMgr->getBtn("exit_btn")->setClicked(false); //Reset the exit button
+		}
+	}
+	if (theGameState == WON || theGameState == LOST || theGameState == END) //If gamestate is euqal to won, lost or end
+	{
+		if (theButtonMgr->getBtn("menu_btn")->getClicked()) //If meny button is clicked
+		{
+			endGame = false; //Reset the end game
+		}
+	}
+
 	// CHeck Button clicked and change state
 	switch (theGameState) //Switch game state
 	{
@@ -304,33 +332,51 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //Clicking exit button changes the game state to quit
 		theGameState = theButtonMgr->getBtn("play_btn")->update(theGameState, PLAYING, theAreaClicked); //Click play button changes the game state to playing
+		if(score == 400) //If the score is equal to 400
+		{
+			score = 0; //Makes score equal to 0
+		}
 	}
 	break;
 	case PLAYING: //Playing scene
 	{
 		if (score == 400) //If players score is equal to 400
 		{
-			cout << "Trying to get to won pls" << endl;
-			theGameState = WON;
-			endGame = true;
+			cout << "Trying to get to won pls" << endl; //Console message
+			theGameState = WON; //Game state is eqal to won
+			score = 0; //Makes score equal to 0
+			endGame = true; //Eng game boolean set to true
 		}
 		for (int alyBob = 0; alyBob < 1; alyBob++/*int alyBob = 0; alyBob < theAliens.size; alyBob++*/) // Change the 35 to number of desired aliens
 		{
-			if (theAliens[alyBob]->getSpritePos().y >= 500)
+			if (theAliens[alyBob]->getSpritePos().y >= 500) //If the aliens position is equal to or greator than 500
 			{
-				cout << "Trying to get to loss pls" << endl;
-				theGameState = LOST;
-				endGame = true;
+				cout << "Trying to get to loss pls" << endl; //	Displays message to console and takes a new line
+				theGameState = LOST; //Makes gamestate equal to lost
 			}
 		}
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, END, theAreaClicked); //Clicking exit button changes the game to state to quit
 		theGameState = theButtonMgr->getBtn("load_btn")->update(theGameState, LOADMAP, theAreaClicked); //Clicking the load button will change the game state to load
-		if (fileAvailable && theGameState == LOADMAP) //If the file is avaiable and the game state is in load
+		if (theGameState == LOADMAP) //If the file is avaiable and the game state is in load
 		{
-			cout << "Loading..." << endl;
-			theTileMap.initialiseMapFromFile(&theFile); //Takes the file from the file location
-			theGameState = PLAYING; //Makes game state to Play
-			theAreaClicked = { 0, 0 }; //Sets are clicked to (0,0) - (x,y)
+			if (!theFile.openFile(ios::in)) //open file for input output
+			{
+				cout << "Could not open specified file '" << theFile.getFileName() << "'. Error " << SDL_GetError() << endl; //Displays error message
+			}
+			else //Else
+			{
+				cout << "File '" << theFile.getFileName() << "' opened for input!" << endl; //Displays message that file has been found
+				cout << "Loading..." << endl;
+				//theTileMap.initialiseMapFromFile(&theFile); //Takes the file from the file location
+				prevScore = theFile.readDataFromFile(); //Makes prevScore equal
+				theFile.closeFile(); //Closes the gile
+				score = atoi(prevScore.c_str()); //Turns the integar score into a string
+				strScore = gameTextList[9] + to_string(score); //the string strScore is equal to the ninth text on the gameTextList and adds the score to the end of the text
+				theTextureManager->deleteTexture("ScoreTxt"); //Deletes the old score text
+				theGameState = PLAYING; //Makes game state to Play
+				theAreaClicked = { 0, 0 }; //Sets are clicked to (0,0) - (x,y)
+			}
+
 		}
 		theGameState = theButtonMgr->getBtn("save_btn")->update(theGameState, SAVEMAP, theAreaClicked); //If save button is clicked changes the game state to savemap
 		if (theGameState == SAVEMAP) //If the game state is Savemap
@@ -349,10 +395,14 @@ void cGame::update(double deltaTime)
 					"File Management", //Title of the message box
 					MB_ICONASTERISK | MB_OK
 					);
+				string saveScoreMsg = "Score " + to_string(score); //String saveScoreMsg is eqal to the score plus the string'score'
 				cout << "File '" << theFile.getFileName() << "' opened for output!" << endl; // Displays a message and ends the line
-				theTileMap.writeMapDataToFile(&theFile); //Saves the file
+				prevScore = (to_string(score).c_str()); //Sets prevScore equal to the score string
+				theFile.writeDataToFile(saveScoreMsg); //Saves the file
+				theFile.closeFile(); //Closes the file
+				
 			}
-			theTileMap.writeMapDataToFile(&theFile); // Saves the file
+			//theTileMap.writeMapDataToFile(&theFile); // Saves the file
 			theGameState = PLAYING; //Sets game state to playing
 			theAreaClicked = { 0, 0 }; //Sets are clicked to (0,0) - (x,y)
 		}
@@ -404,11 +454,24 @@ void cGame::update(double deltaTime)
 			}
 		}
 		theShip.update(deltaTime); //Update the Rockets position
-		if (endGame == true)
+		if (endGame == true || theGameState == LOST || theGameState == WON) //If endgame boolean is eqal to ture, gamestate is equal to lost or won
 		{
-			theAliens.clear();
-			theBullets.clear();
-			theAlien.setSpritePos({ 500, 700 });
+			cout << "Game reset is happening the now"; //Displays message to the console
+			theAliens.clear(); //Clears the alien sprites
+			theBullets.clear(); //Clears the bullet sprites
+			theShip.setSpritePos({ 500, 700 }); //Sets the players rocket to the original position
+			score = 0; //Sets score to equal 0
+			//Aliens - Vector Array
+			for (int aly = 0; aly < 4; aly++) // Change the 35 to number of desired aliens
+			{
+				theAliens.push_back(new cAliens);
+				theAliens[aly]->setSpritePos({ 100 + (266 * aly), 0 }); //How do i get aliens to spawn in a row...
+				theAliens[aly]->setSpriteTranslation({ -10, 0 }); //Aliens movement
+				theAliens[aly]->setTexture(theTextureManager->getTexture("alien")); //Gets alien texure
+				theAliens[aly]->setSpriteDimensions(theTextureManager->getTexture("alien")->getTWidth(), theTextureManager->getTexture("alien")->getTHeight()); //Aliens width and height
+				theAliens[aly]->setActive(true);
+			}
+			endGame = false; //Makes end game boolean equal to false
 		}
 	}
 	break;
@@ -416,7 +479,6 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
-		endGame = false;
 	}
 	break;
 	case QUIT:
@@ -428,14 +490,12 @@ void cGame::update(double deltaTime)
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
-		endGame = false;
 	}
 	break;
 	case WON:
 	{
 		theGameState = theButtonMgr->getBtn("exit_btn")->update(theGameState, QUIT, theAreaClicked); //If exit button clicked then change game state to quit
 		theGameState = theButtonMgr->getBtn("menu_btn")->update(theGameState, MENU, theAreaClicked); //If menu button clicked the change game state to menu
-		endGame = false;
 	}
 	break;
 	default:
@@ -509,14 +569,14 @@ bool cGame::getInput(bool theLoop)
 			break;
 			case SDLK_w:
 			{
-				theSoundMgr->getSnd("Motivation")->play(0);
-				cout << "You discovered the easter egg of motivation woooo";
+				theSoundMgr->getSnd("Motivation")->play(0); //Plays the sound clip
+				cout << "You discovered the easter egg of motivation woooo"; //Console message
 			}
 			break;
 			case SDLK_i:
 			{
-				bool easterEgg = true;
-				cout << "You have activated the easter egg";
+				bool easterEgg = true; //Makes boolean easter egg to true
+				cout << "You have activated the easter egg"; //Console message 
 			}
 			break;
 			case SDLK_LEFT: //Left arrow key

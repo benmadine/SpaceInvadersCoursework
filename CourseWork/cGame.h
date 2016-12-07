@@ -39,6 +39,9 @@ private:
 
 	//Background,ship and alien sprites 
 	cSprite spriteBackground; //BackGround
+	cSprite spriteBackgroundGame;
+	cSprite spriteBackgroundLoose;
+	cSprite spriteBackgroundWon;
 	cShip theShip; //Players Ship
 	cAliens theAlien; //Space Invader Alien
 	cBullet theBullet; //The Bullet
@@ -84,6 +87,7 @@ private:
 	FPoint scale; //Scale
 	cFileHandler theFile; //File
 	bool fileAvailable; //Boolean to see if file is there true/false
+	string prevScore;
 };
 
 #endif
